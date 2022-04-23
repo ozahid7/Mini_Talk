@@ -6,21 +6,21 @@
 void handler_su(int nb, siginfo_t *info, void *vod)
 {
 	static int i = 7;
-	static char r = 0;
+	static char r;
 	static int pid = -1;
 	if (pid != info->si_pid && info->si_pid != 0)
 	{
-		// printf("######
 		r = 0;
 		i = 7;
 		pid = info->si_pid;
 	}
-	// printf("***pid%d\n", pid);
 	if (nb == SIGUSR1)
 		r = (r | (1 << i));
 	if (i == 0)
 	{
 		write(1, &r, 1);
+		if (r == 0)
+			kill(info->si_pid, SIGUSR1);
 		i = 8;
 		r = 0;
 	}
@@ -37,6 +37,7 @@ int main()
 	sigaction(SIGUSR2, &sa, NULL);
 	pid = getpid();
 	printf("%d\n", pid);
+	
 	while (1)
 		pause();
 }
