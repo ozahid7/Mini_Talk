@@ -1,13 +1,46 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server_bonus.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ozahid- <ozahid-@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/04/23 15:16:49 by ozahid-           #+#    #+#             */
+/*   Updated: 2022/04/23 22:33:31 by ozahid-          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <signal.h>
-#include <string.h>
-#include <stdio.h>
 #include <unistd.h>
 
-void handler_su(int nb, siginfo_t *info, void *vod)
+void	ft_putchar(char c)
 {
-	static int i = 7;
-	static char r;
-	static int pid = -1;
+	write(1, &c, 1);
+}
+
+void	ft_putnbr(int nb)
+{
+	long long int	n;
+
+	n = nb;
+	if (n >= 0 && n <= 9)
+	{
+		ft_putchar(n + 48);
+	}
+	else
+	{
+		ft_putnbr(n / 10);
+		ft_putnbr(n % 10);
+	}
+}
+
+void	handler_su(int nb, siginfo_t *info, void *vod)
+{
+	static int	i = 7;
+	static char	r;
+	static int	pid = -1;
+	
+	(void)vod;
 	if (pid != info->si_pid && info->si_pid != 0)
 	{
 		r = 0;
@@ -18,7 +51,7 @@ void handler_su(int nb, siginfo_t *info, void *vod)
 		r = (r | (1 << i));
 	if (i == 0)
 	{
-		write(1, &r, 1);
+		ft_putchar(r);
 		if (r == 0)
 			kill(info->si_pid, SIGUSR1);
 		i = 8;
@@ -27,17 +60,17 @@ void handler_su(int nb, siginfo_t *info, void *vod)
 	i--;
 }
 
-int main()
+int	main(void)
 {
-	struct sigaction sa;
-	int pid;
+	struct sigaction	sa;
+
 	sa.sa_sigaction = &handler_su;
 	sa.sa_flags = SA_RESTART | SA_SIGINFO;
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
-	pid = getpid();
-	printf("%d\n", pid);
-	
+	write(1, "pid = ", 6);
+	ft_putnbr(getpid());
+	write(1, "\n", 1);
 	while (1)
 		pause();
 }
