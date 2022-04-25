@@ -6,7 +6,7 @@
 /*   By: ozahid- <ozahid-@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/23 18:21:58 by ozahid-           #+#    #+#             */
-/*   Updated: 2022/04/23 22:34:43 by ozahid-          ###   ########.fr       */
+/*   Updated: 2022/04/24 01:37:33 by ozahid-          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ void	handler_su(int nb, siginfo_t *info, void *vod)
 	static int	i = 7;
 	static char	r = 0;
 	static int	pid = -1;
-	
-	(void)vod;
+
+	(void) vod;
 	if (pid != info->si_pid && info->si_pid != 0)
 	{
 		r = 0;

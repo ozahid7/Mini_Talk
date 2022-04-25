@@ -6,12 +6,13 @@
 /*   By: ozahid- <ozahid-@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/23 17:48:13 by ozahid-           #+#    #+#             */
-/*   Updated: 2022/04/23 22:29:25 by ozahid-          ###   ########.fr       */
+/*   Updated: 2022/04/24 01:33:36 by ozahid-          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <signal.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <string.h>
 
 int	ft_strlen(const char *s)
@@ -56,9 +57,21 @@ void	ft_get_bits(char c, int pid)
 	while (i >= 0)
 	{
 		if ((c & (1 << i)) >> i)
-			kill(pid, SIGUSR1);
+		{
+			if (kill(pid, SIGUSR1) == -1)
+			{
+				write(1, "error\n", 6);
+				exit(1);
+			}
+		}
 		else
-			kill(pid, SIGUSR2);
+		{
+			if (kill(pid, SIGUSR2) == -1)
+			{
+				write(1, "error\n", 6);
+				exit(1);
+			}
+		}
 		i--;
 		usleep (800);
 	}
@@ -71,12 +84,16 @@ int	main(int ac, char *av[])
 
 	i = 0;
 	if (ac != 3)
+	{
+		write(1, "invalid arguments\n", 18);
 		return (1);
+	}
 	pid = ft_atoi(av[1]);
-	if(pid == 0)
-		return(1);
-	if(pid == 0)
-		return(1);
+	if (pid == 0)
+	{
+		write(1, "invalid pid\n", 12);
+		return (1);
+	}
 	while (i <= ft_strlen(av[2]))
 		ft_get_bits(av[2][i++], pid);
 }
